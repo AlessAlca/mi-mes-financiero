@@ -18,11 +18,9 @@ import {
   DEMO_VARIABLE_EXPENSES,
 } from "./data/demo";
 import { Header } from "./components/Header";
-import { CollapsiblePlan } from "./components/CollapsiblePlan";
 import { TabBar } from "./components/TabBar";
 import type { Tab } from "./components/TabBar";
-import { StatusTip } from "./components/StatusTip";
-import { SavingsGoal } from "./components/SavingsGoal";
+import { MonthlySetup } from "./components/MonthlySetup";
 import { SpendingLimit } from "./components/SpendingLimit";
 import { GastosHormiga } from "./components/GastosHormiga";
 import { NetWorthCard } from "./components/NetWorthCard";
@@ -34,7 +32,7 @@ import { LiabilitiesCard } from "./components/LiabilitiesCard";
 import { AssetsCard } from "./components/AssetsCard";
 import { DataActions } from "./components/DataActions";
 
-// ── Init helpers ─────────────────────────────────────────────────────────────
+// ── Init helpers ──────────────────────────────────────────────────────────────
 
 function initProfile(): MonthlyProfile {
   return loadProfile() ?? DEMO_PROFILE;
@@ -115,22 +113,22 @@ export function App() {
 
   function handleLoadDemo() {
     const d = createDemoData();
-    setProfile(d.profile);        saveProfile(d.profile);
-    setFixedExpenses(d.fixedExpenses);       saveFixedExpenses(d.fixedExpenses);
-    setVariableExpenses(d.variableExpenses); saveVariableExpenses(d.variableExpenses);
-    setLiabilities(d.liabilities);          saveLiabilities(d.liabilities);
-    setAssets(d.assets);                    saveAssets(d.assets);
+    setProfile(d.profile);                    saveProfile(d.profile);
+    setFixedExpenses(d.fixedExpenses);        saveFixedExpenses(d.fixedExpenses);
+    setVariableExpenses(d.variableExpenses);  saveVariableExpenses(d.variableExpenses);
+    setLiabilities(d.liabilities);           saveLiabilities(d.liabilities);
+    setAssets(d.assets);                      saveAssets(d.assets);
   }
 
   function handleResetMonth() {
     if (
       !window.confirm(
-        "¿Seguro que quieres reiniciar el mes?\n\nSe borrarán todos tus gastos variables. Tu plan, fijos, deudas y activos se conservan."
+        "¿Seguro que quieres reiniciar el mes?\n\nSe borrarán todos tus gastos variables. Tu plan, fijos, pasivos y activos se conservan."
       )
     ) return;
     const fresh: MonthlyProfile = { ...profile, month: currentMonth() };
-    setProfile(fresh);     saveProfile(fresh);
-    setVariableExpenses([]); saveVariableExpenses([]);
+    setProfile(fresh);         saveProfile(fresh);
+    setVariableExpenses([]);   saveVariableExpenses([]);
   }
 
   // ── Render ────────────────────────────────────────────────────────────────
@@ -141,33 +139,21 @@ export function App() {
         profile={profile}
         summary={summary}
         hasProfile={hasProfile}
-        onAddExpense={() => setActiveTab("gastos")}
+        onAddExpense={() => setActiveTab("variables")}
       />
 
       <main className="main-content">
-        <CollapsiblePlan
-          profile={profile}
-          hasProfile={hasProfile}
-          onChange={handleProfileChange}
-        />
-
         <TabBar active={activeTab} onChange={setActiveTab} />
 
-        {/* ── Resumen ─────────────────────────────────────────────────────── */}
+        {/* ── Tab: Resumen ────────────────────────────────────────────────── */}
         {activeTab === "resumen" && (
           <>
             {hasProfile ? (
-              <>
-                <StatusTip status={summary.status} />
-                <SpendingLimit profile={profile} summary={summary} />
-                <SavingsGoal profile={profile} summary={summary} />
-                <GastosHormiga summary={summary} />
-                <NetWorthCard summary={summary} />
-              </>
+              <SpendingLimit profile={profile} summary={summary} />
             ) : (
               <div className="card">
                 <p className="card-empty">
-                  Define tu plan mensual arriba para ver el resumen de tu mes.
+                  Configura tu perfil en la pestaña "Setup" para ver tu resumen mensual.
                 </p>
               </div>
             )}
@@ -175,10 +161,25 @@ export function App() {
           </>
         )}
 
-        {/* ── Gastos ──────────────────────────────────────────────────────── */}
-        {activeTab === "gastos" && (
+        {/* ── Tab: Setup ──────────────────────────────────────────────────── */}
+        {activeTab === "setup" && (
+          <MonthlySetup profile={profile} onChange={handleProfileChange} />
+        )}
+
+        {/* ── Tab: Fijos (Gastos fijos) ────────────────────────────────────── */}
+        {activeTab === "fijos" && (
+          <FixedExpensesCard
+            fixedExpenses={fixedExpenses}
+            onAdd={handleAddFixed}
+            onDelete={handleDeleteFixed}
+          />
+        )}
+
+        {/* ── Tab: Variables (Gastos variables) ────────────────────────────── */}
+        {activeTab === "variables" && (
           <>
             <ExpenseForm onAdd={handleAddVariable} />
+            <GastosHormiga summary={summary} />
             <RecentExpenses
               expenses={variableExpenses}
               onDelete={handleDeleteVariable}
@@ -188,34 +189,22 @@ export function App() {
           </>
         )}
 
-        {/* ── Compromisos ─────────────────────────────────────────────────── */}
-        {activeTab === "compromisos" && (
-          <>
-            <FixedExpensesCard
-              fixedExpenses={fixedExpenses}
-              onAdd={handleAddFixed}
-              onDelete={handleDeleteFixed}
-            />
-            <LiabilitiesCard
-              liabilities={liabilities}
-              onAdd={handleAddLiability}
-              onDelete={handleDeleteLiability}
-            />
-          </>
+        {/* ── Tab: Pasivos ─────────────────────────────────────────────────── */}
+        {activeTab === "pasivos" && (
+          <LiabilitiesCard
+            liabilities={liabilities}
+            onAdd={handleAddLiability}
+            onDelete={handleDeleteLiability}
+          />
         )}
 
-        {/* ── Patrimonio ──────────────────────────────────────────────────── */}
+        {/* ── Tab: Patrimonio ──────────────────────────────────────────────── */}
         {activeTab === "patrimonio" && (
           <>
             <AssetsCard
               assets={assets}
               onAdd={handleAddAsset}
               onDelete={handleDeleteAsset}
-            />
-            <LiabilitiesCard
-              liabilities={liabilities}
-              onAdd={handleAddLiability}
-              onDelete={handleDeleteLiability}
             />
             <NetWorthCard summary={summary} />
           </>

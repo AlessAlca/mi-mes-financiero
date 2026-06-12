@@ -212,6 +212,81 @@ body {
 
 .header-btn--ghost:hover { background: rgba(255,255,255,.2); }
 
+/* ── Header hero KPI ── */
+.header-hero {
+  text-align: center;
+  padding: .375rem 0 .125rem;
+  border-top: 1px solid rgba(255,255,255,.15);
+  border-bottom: 1px solid rgba(255,255,255,.15);
+}
+
+.header-hero-value {
+  font-size: 1.875rem;
+  font-weight: 900;
+  letter-spacing: -.03em;
+  line-height: 1;
+}
+
+.header-hero-value--danger { color: #fca5a5; }
+
+.header-hero-label {
+  font-size: .65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  opacity: .65;
+  margin-top: .3rem;
+}
+
+/* ── Summary card (Resumen tab) ── */
+.summary-status-banner {
+  padding: .625rem .875rem;
+  border-radius: var(--radius-sm);
+  font-size: .875rem;
+  font-weight: 500;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+  border-left: 3px solid transparent;
+}
+
+.summary-section-title {
+  font-size: .7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--muted);
+  margin-top: .75rem;
+  margin-bottom: .25rem;
+}
+
+/* First section title inside card needs no top margin */
+.card .summary-section-title:first-of-type { margin-top: 0; }
+
+.stat-row--deduction span { padding-left: .75rem; }
+.stat-row--deduction span::before { content: "−  "; color: var(--muted); font-size: .8rem; }
+
+.stat-row--result {
+  border-top: 1px solid var(--border);
+  margin-top: .125rem;
+  font-weight: 600;
+}
+
+.stat-row--hero {
+  background: var(--primary-light);
+  margin: .375rem -.25rem 0;
+  padding: .5rem .25rem;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+}
+
+.stat-row--hero strong { font-size: 1.0625rem; }
+
+.summary-divider {
+  height: 1px;
+  background: var(--border);
+  margin: .875rem 0 .25rem;
+}
+
 /* ── Cards ── */
 .card {
   background: var(--surface);
