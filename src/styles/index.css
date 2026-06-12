@@ -812,6 +812,109 @@ select:focus {
 .status-tip--warning  { background: var(--warning-light); border-left-color: var(--warning); color: #92400e; }
 .status-tip--offTrack { background: var(--danger-light);  border-left-color: var(--danger);  color: #991b1b; }
 
+/* ── Entity cards (fixed expenses, liabilities, assets) ── */
+.entity-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: .375rem;
+  margin-bottom: 1rem;
+}
+
+.entity-item {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .5rem .625rem;
+  background: #fafbfc;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: .875rem;
+}
+
+.entity-item--two-lines {
+  flex-direction: column;
+  align-items: stretch;
+  gap: .25rem;
+}
+
+.entity-item--total {
+  background: transparent;
+  border-color: transparent;
+  border-top: 1px solid var(--border);
+  border-radius: 0;
+  padding-top: .5rem;
+  font-weight: 600;
+}
+
+.entity-item-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.entity-item-sub {
+  display: flex;
+  gap: 1rem;
+  font-size: .8rem;
+  color: var(--muted);
+}
+
+.entity-name {
+  flex: 1;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.entity-name-group {
+  display: flex;
+  align-items: center;
+  gap: .375rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.entity-type-tag {
+  font-size: .68rem;
+  font-weight: 600;
+  background: var(--primary-light);
+  color: var(--primary);
+  border-radius: 99px;
+  padding: .1rem .45rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.entity-amount {
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.entity-form { display: flex; flex-direction: column; gap: .625rem; }
+
+.entity-form-row {
+  display: flex;
+  gap: .625rem;
+}
+
+.btn-secondary-add {
+  padding: .625rem 1rem;
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1.5px solid var(--primary);
+  border-radius: var(--radius-sm);
+  font-size: .875rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 40px;
+  transition: background .12s;
+}
+
+.btn-secondary-add:hover { background: var(--primary); color: #fff; }
+
 /* ── Responsive tweaks for very small screens ── */
 @media (max-width: 360px) {
   .stat-grid { grid-template-columns: 1fr; }

@@ -1,16 +1,15 @@
-import type { FinancialSummary, MonthlyPlan } from "../types";
+import type { FinancialSummary, MonthlyProfile } from "../types";
 import { formatCOP } from "../lib/formatting";
 
 type Props = {
-  plan: MonthlyPlan;
+  profile: MonthlyProfile;
   summary: FinancialSummary;
 };
 
-export function SavingsGoal({ plan, summary }: Props) {
-  // Progress = how much of the goal will be reached; caps at 100%
+export function SavingsGoal({ profile, summary }: Props) {
   const progress =
-    plan.savingsGoal > 0
-      ? Math.min(1, Math.max(0, summary.projectedSavings / plan.savingsGoal))
+    profile.monthlySavingsGoal > 0
+      ? Math.min(1, Math.max(0, summary.projectedSavings / profile.monthlySavingsGoal))
       : 1;
   const pct = Math.round(progress * 100);
   const onTarget = summary.savingsGap >= 0;
@@ -25,7 +24,7 @@ export function SavingsGoal({ plan, summary }: Props) {
       <h2>Meta de ahorro</h2>
       <div className="stat-row">
         <span>Meta</span>
-        <strong>{formatCOP(plan.savingsGoal)}</strong>
+        <strong>{formatCOP(profile.monthlySavingsGoal)}</strong>
       </div>
       <div className="stat-row">
         <span>Ahorro proyectado</span>

@@ -1,35 +1,47 @@
-import type { Expense, MonthlyPlan } from "../types";
+import type {
+  Asset,
+  FixedExpense,
+  Liability,
+  MonthlyProfile,
+  VariableExpense,
+} from "../types";
 
-const PLAN_KEY = "personal-finance-monthly-plan";
-const EXPENSES_KEY = "personal-finance-expenses";
+const KEYS = {
+  profile:          "pf-profile",
+  fixedExpenses:    "pf-fixed-expenses",
+  variableExpenses: "pf-variable-expenses",
+  liabilities:      "pf-liabilities",
+  assets:           "pf-assets",
+} as const;
 
-export function loadPlan(): MonthlyPlan | null {
+function load<T>(key: string): T | null {
   try {
-    const raw = localStorage.getItem(PLAN_KEY);
-    return raw ? (JSON.parse(raw) as MonthlyPlan) : null;
+    const raw = localStorage.getItem(key);
+    return raw ? (JSON.parse(raw) as T) : null;
   } catch {
     return null;
   }
 }
 
-export function savePlan(plan: MonthlyPlan): void {
-  localStorage.setItem(PLAN_KEY, JSON.stringify(plan));
+function save(key: string, value: unknown): void {
+  localStorage.setItem(key, JSON.stringify(value));
 }
 
-export function loadExpenses(): Expense[] {
-  try {
-    const raw = localStorage.getItem(EXPENSES_KEY);
-    return raw ? (JSON.parse(raw) as Expense[]) : [];
-  } catch {
-    return [];
-  }
-}
+export const loadProfile        = (): MonthlyProfile | null  => load<MonthlyProfile>(KEYS.profile);
+export const saveProfile        = (v: MonthlyProfile)        => save(KEYS.profile, v);
 
-export function saveExpenses(expenses: Expense[]): void {
-  localStorage.setItem(EXPENSES_KEY, JSON.stringify(expenses));
-}
+export const loadFixedExpenses   = (): FixedExpense[]        => load<FixedExpense[]>(KEYS.fixedExpenses) ?? [];
+export const saveFixedExpenses   = (v: FixedExpense[])       => save(KEYS.fixedExpenses, v);
+
+export const loadVariableExpenses = (): VariableExpense[]    => load<VariableExpense[]>(KEYS.variableExpenses) ?? [];
+export const saveVariableExpenses = (v: VariableExpense[])   => save(KEYS.variableExpenses, v);
+
+export const loadLiabilities    = (): Liability[]            => load<Liability[]>(KEYS.liabilities) ?? [];
+export const saveLiabilities    = (v: Liability[])           => save(KEYS.liabilities, v);
+
+export const loadAssets         = (): Asset[]                => load<Asset[]>(KEYS.assets) ?? [];
+export const saveAssets         = (v: Asset[])               => save(KEYS.assets, v);
 
 export function clearAll(): void {
-  localStorage.removeItem(PLAN_KEY);
-  localStorage.removeItem(EXPENSES_KEY);
+  Object.values(KEYS).forEach((k) => localStorage.removeItem(k));
 }

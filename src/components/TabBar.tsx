@@ -1,10 +1,10 @@
-export type Tab = "resumen" | "gasto" | "movimientos" | "categorias";
+export type Tab = "resumen" | "gastos" | "compromisos" | "patrimonio";
 
 const TABS: { id: Tab; label: string }[] = [
-  { id: "resumen",     label: "Resumen" },
-  { id: "gasto",       label: "Agregar gasto" },
-  { id: "movimientos", label: "Movimientos" },
-  { id: "categorias",  label: "Categorías" },
+  { id: "resumen",      label: "Resumen" },
+  { id: "gastos",       label: "Gastos" },
+  { id: "compromisos",  label: "Compromisos" },
+  { id: "patrimonio",   label: "Patrimonio" },
 ];
 
 type Props = {

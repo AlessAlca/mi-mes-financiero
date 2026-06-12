@@ -23,15 +23,26 @@ export const EXPENSE_CATEGORIES: ExpenseCategory[] = [
   "Otros",
 ];
 
-export type MonthlyPlan = {
-  expectedIncome: number;
-  savingsGoal: number;
-  monthlySpendingLimit: number;
-  hormigaLimit: number;
+// ── Monthly profile ──────────────────────────────────────────────────────────
+
+export type MonthlyProfile = {
+  id: string;
   month: string;
+  monthlyIncome: number;
+  monthlySavingsGoal: number;
 };
 
-export type Expense = {
+// ── Fixed expenses ───────────────────────────────────────────────────────────
+
+export type FixedExpense = {
+  id: string;
+  name: string;
+  monthlyAmount: number;
+};
+
+// ── Variable expenses ────────────────────────────────────────────────────────
+
+export type VariableExpense = {
   id: string;
   amount: number;
   category: ExpenseCategory;
@@ -40,18 +51,73 @@ export type Expense = {
   isHormiga: boolean;
 };
 
+// ── Liabilities ──────────────────────────────────────────────────────────────
+
+export type Liability = {
+  id: string;
+  name: string;
+  totalAmount: number;    // affects net worth (balance sheet)
+  monthlyPayment: number; // affects monthly cash flow
+};
+
+// ── Assets ───────────────────────────────────────────────────────────────────
+
+export type AssetType =
+  | "efectivo"
+  | "ahorro"
+  | "inversion"
+  | "inmueble"
+  | "vehiculo"
+  | "otro";
+
+export const ASSET_TYPE_LABELS: Record<AssetType, string> = {
+  efectivo:  "Efectivo",
+  ahorro:    "Ahorros",
+  inversion: "Inversión",
+  inmueble:  "Inmueble",
+  vehiculo:  "Vehículo",
+  otro:      "Otro",
+};
+
+export const ASSET_TYPES: AssetType[] = [
+  "efectivo",
+  "ahorro",
+  "inversion",
+  "inmueble",
+  "vehiculo",
+  "otro",
+];
+
+export type Asset = {
+  id: string;
+  name: string;
+  type: AssetType;
+  value: number;
+};
+
+// ── Financial summary ────────────────────────────────────────────────────────
+
 export type FinancialStatus = "onTrack" | "warning" | "offTrack";
 
 export type FinancialSummary = {
-  availableToSpend: number;
-  totalSpent: number;
-  remainingToSpend: number;
+  // Monthly cash flow breakdown
+  fixedExpensesTotal: number;
+  liabilityMonthlyPaymentsTotal: number;
+  initialVariableCashAvailable: number;
+  variableExpensesTotal: number;
+  currentVariableCashAvailable: number;
+  // Savings
   projectedSavings: number;
   savingsGap: number;
-  percentageBudgetUsed: number;
-  recommendedDailySpend: number;
+  // Gastos hormiga
   hormigaTotal: number;
-  percentageHormigaUsed: number;
   hormigaPercentageOfTotal: number;
+  // Net worth
+  assetsTotal: number;
+  liabilitiesTotal: number;
+  netWorth: number;
+  projectedNetWorth: number;
+  // Daily guidance
+  recommendedDailySpend: number;
   status: FinancialStatus;
 };

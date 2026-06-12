@@ -355,32 +355,41 @@ No complex charts are required for the MVP.
 
 Use TypeScript types when possible.
 
-### MonthlyPlan
+### MonthlyProfile
+
+The user's monthly income setup. One profile per month.
 
 ```ts
-type MonthlyPlan = {
-  expectedIncome: number;
-  savingsGoal: number;
-  monthlySpendingLimit: number;
-  hormigaLimit: number;
+type MonthlyProfile = {
+  id: string;
   month: string;
+  monthlyIncome: number;
+  monthlySavingsGoal: number;
 };
 ```
 
-Field descriptions:
+---
 
-* `expectedIncome`: Money the user expects to receive during the month.
-* `savingsGoal`: Amount the user wants to save during the month.
-* `monthlySpendingLimit`: Maximum amount the user can spend during the month.
-* `hormigaLimit`: Maximum amount the user wants to spend in gastos hormiga.
-* `month`: Current month identifier.
+### FixedExpense
+
+A recurring monthly cost the user must pay regardless of behavior (rent, utilities, subscriptions).
+
+```ts
+type FixedExpense = {
+  id: string;
+  name: string;
+  monthlyAmount: number;
+};
+```
 
 ---
 
-### Expense
+### VariableExpense
+
+A day-to-day expense the user can control.
 
 ```ts
-type Expense = {
+type VariableExpense = {
   id: string;
   amount: number;
   category: ExpenseCategory;
@@ -390,14 +399,47 @@ type Expense = {
 };
 ```
 
-Field descriptions:
+When `category` is `"Gastos hormiga"`, set `isHormiga = true`.
 
-* `id`: Unique expense identifier.
-* `amount`: Expense amount in COP.
-* `category`: Expense category.
-* `description`: Optional description.
-* `date`: Expense date.
-* `isHormiga`: Indicates whether the expense counts as gasto hormiga.
+---
+
+### Liability
+
+A debt or financial obligation. The `totalAmount` affects net worth. The `monthlyPayment` reduces monthly cash flow.
+
+```ts
+type Liability = {
+  id: string;
+  name: string;
+  totalAmount: number;
+  monthlyPayment: number;
+};
+```
+
+Important: do not double-count liabilities. `totalAmount` is for the balance sheet. `monthlyPayment` is for the cash flow.
+
+---
+
+### Asset
+
+Something the user owns that has monetary value.
+
+```ts
+type Asset = {
+  id: string;
+  name: string;
+  type: AssetType;
+  value: number;
+};
+
+type AssetType =
+  | "efectivo"
+  | "ahorro"
+  | "inversion"
+  | "inmueble"
+  | "vehiculo"
+  | "otro";
+```
 
 ---
 
@@ -423,14 +465,24 @@ type ExpenseCategory =
 
 ```ts
 type FinancialSummary = {
-  totalSpent: number;
-  availableToSpend: number;
-  remainingToSpend: number;
+  // Monthly cash flow
+  fixedExpensesTotal: number;
+  liabilityMonthlyPaymentsTotal: number;
+  initialVariableCashAvailable: number;
+  variableExpensesTotal: number;
+  currentVariableCashAvailable: number;
+  // Savings
   projectedSavings: number;
   savingsGap: number;
+  // Gastos hormiga
   hormigaTotal: number;
-  percentageBudgetUsed: number;
-  daysRemainingInMonth: number;
+  hormigaPercentageOfTotal: number;
+  // Net worth
+  assetsTotal: number;
+  liabilitiesTotal: number;
+  netWorth: number;
+  projectedNetWorth: number;
+  // Daily guidance
   recommendedDailySpend: number;
   status: FinancialStatus;
 };
@@ -448,36 +500,77 @@ type FinancialStatus = "onTrack" | "warning" | "offTrack";
 
 ## 8. Core Calculations
 
-### Available to spend
+### Fixed expenses total
 
 ```ts
-availableToSpend = expectedIncome - savingsGoal;
-```
-
-This represents how much the user can spend while still reaching the savings goal.
-
----
-
-### Total spent
-
-```ts
-totalSpent = sum of all expenses for the selected month;
+fixedExpensesTotal = sum of fixedExpenses[].monthlyAmount
 ```
 
 ---
 
-### Remaining to spend
+### Liability monthly payments total
 
 ```ts
-remainingToSpend = monthlySpendingLimit - totalSpent;
+liabilityMonthlyPaymentsTotal = sum of liabilities[].monthlyPayment
+```
+
+This is separate from `liabilitiesTotal`, which is the balance-sheet total.
+
+---
+
+### Liabilities total (balance sheet)
+
+```ts
+liabilitiesTotal = sum of liabilities[].totalAmount
+```
+
+---
+
+### Assets total
+
+```ts
+assetsTotal = sum of assets[].value
+```
+
+---
+
+### Variable expenses total
+
+```ts
+variableExpensesTotal = sum of variableExpenses[].amount
+```
+
+---
+
+### Initial variable cash available
+
+How much cash the user can spend on variable day-to-day expenses after covering all fixed commitments and setting aside savings.
+
+```ts
+initialVariableCashAvailable =
+  monthlyIncome - fixedExpensesTotal - liabilityMonthlyPaymentsTotal - monthlySavingsGoal
+```
+
+---
+
+### Current variable cash available
+
+How much variable cash is still unspent.
+
+```ts
+currentVariableCashAvailable =
+  initialVariableCashAvailable - variableExpensesTotal
 ```
 
 ---
 
 ### Projected savings
 
+What the user will save if spending stops now.
+
 ```ts
-projectedSavings = expectedIncome - totalSpent;
+projectedSavings =
+  monthlyIncome - fixedExpensesTotal - liabilityMonthlyPaymentsTotal - variableExpensesTotal
 ```
 
 ---
@@ -485,52 +578,39 @@ projectedSavings = expectedIncome - totalSpent;
 ### Savings gap
 
 ```ts
-savingsGap = projectedSavings - savingsGoal;
+savingsGap = projectedSavings - monthlySavingsGoal
 ```
 
-If positive, the user is above the savings goal.
-
-If negative, the user is below the savings goal.
+Positive means above goal. Negative means below goal.
 
 ---
 
-### Percentage budget used
+### Net worth
 
 ```ts
-percentageBudgetUsed = totalSpent / monthlySpendingLimit;
-```
-
----
-
-### Hormiga total
-
-```ts
-hormigaTotal = sum of all expenses where isHormiga is true;
+netWorth = assetsTotal - liabilitiesTotal
 ```
 
 ---
 
-### Days remaining in month
+### Projected net worth
+
+Net worth at the end of the month if the user saves the projected amount.
 
 ```ts
-daysRemainingInMonth = number of days left in the current month;
+projectedNetWorth = netWorth + Math.max(projectedSavings, 0)
 ```
-
-Include today if it makes the calculation easier and clearer for the user.
 
 ---
 
 ### Recommended daily spend
 
 ```ts
-recommendedDailySpend = remainingToSpend / daysRemainingInMonth;
+recommendedDailySpend =
+  currentVariableCashAvailable > 0
+    ? currentVariableCashAvailable / daysRemainingInMonth
+    : 0
 ```
-
-If remainingToSpend is negative, recommendedDailySpend should not show a positive amount.
-
-Example copy:
-
-> Ya superaste tu límite de gastos para este mes.
 
 ---
 
@@ -542,9 +622,9 @@ The app should show one of three statuses.
 
 Use `onTrack` when:
 
-* Projected savings are greater than or equal to the savings goal.
-* Total spending is within the expected pace for the current day of the month.
-* Hormiga spending is not close to the hormiga limit.
+* `projectedSavings >= monthlySavingsGoal`
+* `currentVariableCashAvailable >= 0`
+* Variable spending is not ahead of the expected daily pace
 
 Message:
 
@@ -554,21 +634,14 @@ Message:
 
 ### Warning
 
-Use `warning` when:
+Use `warning` when projectedSavings is still above goal but:
 
-* Projected savings are still greater than or equal to the savings goal, but the user is close to falling behind.
-* Or total spending is above the expected pace for this point in the month.
-* Or hormiga spending is close to the hormiga limit.
+* Variable spending is ahead of the expected daily pace, or
+* 80% or more of the initial variable cash has been used
 
 Message:
 
 > Ten cuidado. Tu ritmo de gasto está alto para este punto del mes.
-
-Suggested thresholds:
-
-* Budget used is above expected monthly pace by more than 10%.
-* Hormiga spending is equal to or above 80% of the hormiga limit.
-* Savings gap is positive but small.
 
 ---
 
@@ -576,9 +649,8 @@ Suggested thresholds:
 
 Use `offTrack` when:
 
-* Projected savings are below the savings goal.
-* Or total spending is greater than the monthly spending limit.
-* Or remainingToSpend is negative.
+* `projectedSavings < monthlySavingsGoal`, or
+* `currentVariableCashAvailable < 0`
 
 Message:
 

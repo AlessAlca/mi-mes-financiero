@@ -1,10 +1,10 @@
-import type { FinancialStatus, FinancialSummary, MonthlyPlan } from "../types";
+import type { FinancialStatus, FinancialSummary, MonthlyProfile } from "../types";
 import { formatCOPShort, formatMonth } from "../lib/formatting";
 
 type Props = {
-  plan: MonthlyPlan;
+  profile: MonthlyProfile;
   summary: FinancialSummary;
-  hasPlan: boolean;
+  hasProfile: boolean;
   onAddExpense: () => void;
 };
 
@@ -20,21 +20,19 @@ const STATUS_MSG: Record<FinancialStatus, string> = {
   offTrack: "Con tus gastos actuales podrías no cumplir tu meta de ahorro.",
 };
 
-export function Header({ plan, summary, hasPlan, onAddExpense }: Props) {
+export function Header({ profile, summary, hasProfile, onAddExpense }: Props) {
   return (
     <header className="app-header">
       <div className="header-inner">
 
-        {/* Row 1 — title + month */}
         <div className="header-top">
           <h1 className="header-title">Mi mes financiero</h1>
-          {hasPlan && (
-            <span className="header-month">{formatMonth(plan.month)}</span>
+          {hasProfile && (
+            <span className="header-month">{formatMonth(profile.month)}</span>
           )}
         </div>
 
-        {/* Row 2 — status or first-run prompt */}
-        {hasPlan ? (
+        {hasProfile ? (
           <div className={`header-status header-status--${summary.status}`}>
             <span className="header-status-dot" aria-hidden="true" />
             <div className="header-status-body">
@@ -48,20 +46,19 @@ export function Header({ plan, summary, hasPlan, onAddExpense }: Props) {
           </p>
         )}
 
-        {/* Row 3 — KPI strip */}
-        {hasPlan && (
+        {hasProfile && (
           <div className="header-kpis">
             <div className="header-kpi">
               <span className="header-kpi-label">Gastado</span>
-              <span className="header-kpi-value">{formatCOPShort(summary.totalSpent)}</span>
+              <span className="header-kpi-value">{formatCOPShort(summary.variableExpensesTotal)}</span>
             </div>
             <div className="header-kpi">
               <span className="header-kpi-label">Disponible</span>
-              <span className="header-kpi-value">{formatCOPShort(summary.remainingToSpend)}</span>
+              <span className="header-kpi-value">{formatCOPShort(summary.currentVariableCashAvailable)}</span>
             </div>
             <div className="header-kpi">
               <span className="header-kpi-label">Meta</span>
-              <span className="header-kpi-value">{formatCOPShort(plan.savingsGoal)}</span>
+              <span className="header-kpi-value">{formatCOPShort(profile.monthlySavingsGoal)}</span>
             </div>
             <div className="header-kpi">
               <span className="header-kpi-label">Diario</span>
@@ -70,7 +67,6 @@ export function Header({ plan, summary, hasPlan, onAddExpense }: Props) {
           </div>
         )}
 
-        {/* Row 4 — primary action */}
         <div className="header-actions">
           <button
             type="button"

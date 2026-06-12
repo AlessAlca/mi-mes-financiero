@@ -1,10 +1,10 @@
 import { useState } from "react";
-import type { Expense, ExpenseCategory } from "../types";
+import type { ExpenseCategory, VariableExpense } from "../types";
 import { EXPENSE_CATEGORIES } from "../types";
 import { formatCOP, today } from "../lib/formatting";
 
 type Props = {
-  onAdd: (expense: Expense) => void;
+  onAdd: (expense: VariableExpense) => void;
 };
 
 const QUICK_AMOUNTS = [5_000, 10_000, 20_000, 50_000];
@@ -86,17 +86,14 @@ export function ExpenseForm({ onAdd }: Props) {
             onChange={(e) => setCategory(e.target.value as ExpenseCategory)}
           >
             {EXPENSE_CATEGORIES.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
+              <option key={c} value={c}>{c}</option>
             ))}
           </select>
         </div>
 
         <div className="field">
           <label htmlFor="expense-desc">
-            Descripción{" "}
-            <span className="label-optional">(opcional)</span>
+            Descripción <span className="label-optional">(opcional)</span>
           </label>
           <input
             id="expense-desc"

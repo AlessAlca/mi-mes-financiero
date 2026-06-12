@@ -1,17 +1,16 @@
 import { useState } from "react";
-import type { MonthlyPlan } from "../types";
+import type { MonthlyProfile } from "../types";
 import { formatCOPShort } from "../lib/formatting";
 import { MonthlySetup } from "./MonthlySetup";
 
 type Props = {
-  plan: MonthlyPlan;
-  hasPlan: boolean;
-  onChange: (plan: MonthlyPlan) => void;
+  profile: MonthlyProfile;
+  hasProfile: boolean;
+  onChange: (profile: MonthlyProfile) => void;
 };
 
-export function CollapsiblePlan({ plan, hasPlan, onChange }: Props) {
-  // Expand by default when no plan exists so the user sees the form immediately
-  const [open, setOpen] = useState(!hasPlan);
+export function CollapsiblePlan({ profile, hasProfile, onChange }: Props) {
+  const [open, setOpen] = useState(!hasProfile);
 
   if (open) {
     return (
@@ -21,7 +20,7 @@ export function CollapsiblePlan({ plan, hasPlan, onChange }: Props) {
             Cerrar ×
           </button>
         </div>
-        <MonthlySetup plan={plan} onChange={onChange} />
+        <MonthlySetup profile={profile} onChange={onChange} />
       </div>
     );
   }
@@ -32,8 +31,8 @@ export function CollapsiblePlan({ plan, hasPlan, onChange }: Props) {
         <div className="collapsible-info">
           <p className="collapsible-title">Tu plan del mes</p>
           <p className="collapsible-detail">
-            {hasPlan
-              ? `Ingreso ${formatCOPShort(plan.expectedIncome)} · Meta ${formatCOPShort(plan.savingsGoal)} · Límite ${formatCOPShort(plan.monthlySpendingLimit)}`
+            {hasProfile
+              ? `Ingreso ${formatCOPShort(profile.monthlyIncome)} · Meta ${formatCOPShort(profile.monthlySavingsGoal)}`
               : "Define tu plan mensual para empezar."}
           </p>
         </div>

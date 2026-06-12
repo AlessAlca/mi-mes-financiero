@@ -1,10 +1,9 @@
-import type { Expense } from "../types";
+import type { VariableExpense } from "../types";
 import { formatCOP, formatDate } from "../lib/formatting";
 
 type Props = {
-  expenses: Expense[];
+  expenses: VariableExpense[];
   onDelete: (id: string) => void;
-  /** If omitted, shows all expenses */
   limit?: number;
   title?: string;
 };
@@ -38,9 +37,7 @@ export function RecentExpenses({
                 <span className="expense-category">{e.category}</span>
                 {e.isHormiga && <span className="expense-tag">hormiga</span>}
               </div>
-              {e.description && (
-                <span className="expense-desc">{e.description}</span>
-              )}
+              {e.description && <span className="expense-desc">{e.description}</span>}
               <span className="expense-date">{formatDate(e.date)}</span>
             </div>
             <div className="expense-right">

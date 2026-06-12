@@ -1,16 +1,13 @@
-import type { Expense } from "../types";
+import type { VariableExpense } from "../types";
 import { EXPENSE_CATEGORIES } from "../types";
 import { formatCOP } from "../lib/formatting";
 import { spendingByCategory } from "../lib/calculations";
 
-type Props = {
-  expenses: Expense[];
-};
+type Props = { expenses: VariableExpense[] };
 
 export function CategorySummary({ expenses }: Props) {
   const byCategory = spendingByCategory(expenses);
   const total = expenses.reduce((s, e) => s + e.amount, 0);
-
   const rows = EXPENSE_CATEGORIES
     .filter((c) => (byCategory[c] ?? 0) > 0)
     .sort((a, b) => (byCategory[b] ?? 0) - (byCategory[a] ?? 0));
@@ -19,7 +16,7 @@ export function CategorySummary({ expenses }: Props) {
     return (
       <section className="card">
         <h2>Gastos por categoría</h2>
-        <p className="card-empty">Agrega un gasto para ver el desglose por categoría.</p>
+        <p className="card-empty">Cuando agregues gastos, aquí verás en qué se está yendo tu plata.</p>
       </section>
     );
   }
