@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { supabase } from "./lib/supabase";
+import { useAuth } from "./hooks/useAuth";
+import { AuthPage } from "./components/AuthPage";
 import type { Asset, FixedExpense, Liability, MonthlyProfile, VariableExpense } from "./types";
 import {
   loadProfile, saveProfile,
@@ -57,6 +60,8 @@ function initAssets(): Asset[] {
 // ── App ───────────────────────────────────────────────────────────────────────
 
 export function App() {
+  const { session, loading: authLoading } = useAuth();
+
   const [profile,          setProfile]         = useState<MonthlyProfile>(initProfile);
   const [fixedExpenses,    setFixedExpenses]    = useState<FixedExpense[]>(initFixed);
   const [variableExpenses, setVariableExpenses] = useState<VariableExpense[]>(initVariable);
@@ -68,6 +73,26 @@ export function App() {
     profile, fixedExpenses, variableExpenses, liabilities, assets
   );
   const hasProfile = profile.monthlyIncome > 0;
+
+  // ── Auth guards ───────────────────────────────────────────────────────────
+
+  // While Supabase resolves the session, show a minimal loading screen
+  // so the user never sees a flash of the login page.
+  if (authLoading) {
+    return (
+      <div className="auth-page">
+        <div className="auth-hero">
+          <h1 className="auth-app-name">Mi mes financiero</h1>
+        </div>
+      </div>
+    );
+  }
+
+  if (!session) return <AuthPage />;
+
+  async function handleSignOut() {
+    await supabase.auth.signOut();
+  }
 
   // ── Handlers ─────────────────────────────────────────────────────────────
 
@@ -139,7 +164,9 @@ export function App() {
         profile={profile}
         summary={summary}
         hasProfile={hasProfile}
+        userEmail={session.user.email ?? ""}
         onAddExpense={() => setActiveTab("variables")}
+        onSignOut={handleSignOut}
       />
 
       <main className="main-content">

@@ -5,7 +5,9 @@ type Props = {
   profile: MonthlyProfile;
   summary: FinancialSummary;
   hasProfile: boolean;
+  userEmail: string;
   onAddExpense: () => void;
+  onSignOut: () => void;
 };
 
 const STATUS_LABEL: Record<FinancialStatus, string> = {
@@ -20,19 +22,29 @@ const STATUS_MSG: Record<FinancialStatus, string> = {
   offTrack: "Tus gastos variables están afectando tu meta de ahorro.",
 };
 
-export function Header({ profile, summary, hasProfile, onAddExpense }: Props) {
+export function Header({ profile, summary, hasProfile, userEmail, onAddExpense, onSignOut }: Props) {
   const cajaPositive = summary.currentVariableCashAvailable >= 0;
 
   return (
     <header className="app-header">
       <div className="header-inner">
 
-        {/* Row 1 — title + month */}
+        {/* Row 1 — title + month + sign out */}
         <div className="header-top">
           <h1 className="header-title">Mi mes financiero</h1>
-          {hasProfile && (
-            <span className="header-month">{formatMonth(profile.month)}</span>
-          )}
+          <div className="header-top-right">
+            {hasProfile && (
+              <span className="header-month">{formatMonth(profile.month)}</span>
+            )}
+            <button
+              type="button"
+              className="header-signout"
+              onClick={onSignOut}
+              title={userEmail}
+            >
+              Salir
+            </button>
+          </div>
         </div>
 
         {/* Row 2 — status */}

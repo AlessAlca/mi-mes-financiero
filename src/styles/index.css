@@ -212,6 +212,125 @@ body {
 
 .header-btn--ghost:hover { background: rgba(255,255,255,.2); }
 
+/* ── Auth page ── */
+.auth-page {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--bg);
+}
+
+.auth-hero {
+  width: 100%;
+  background: linear-gradient(150deg, #1d4ed8 0%, #2563eb 100%);
+  color: #fff;
+  text-align: center;
+  padding: 2.75rem 1.25rem 3.25rem;
+}
+
+.auth-app-name {
+  font-size: 1.625rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
+}
+
+.auth-app-tagline {
+  margin-top: .375rem;
+  font-size: .875rem;
+  opacity: .8;
+}
+
+.auth-card {
+  width: calc(100% - 2rem);
+  max-width: 400px;
+  margin-top: -1.75rem;
+  padding: 1.75rem 1.5rem 1.5rem;
+}
+
+.auth-card-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 1.25rem;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: .875rem;
+}
+
+.auth-error {
+  font-size: .85rem;
+  color: var(--danger);
+  background: var(--danger-light);
+  border: 1px solid var(--danger-border);
+  border-radius: var(--radius-sm);
+  padding: .5rem .75rem;
+  line-height: 1.4;
+}
+
+.auth-info {
+  font-size: .85rem;
+  color: var(--success);
+  background: var(--success-light);
+  border: 1px solid var(--success-border);
+  border-radius: var(--radius-sm);
+  padding: .5rem .75rem;
+  margin-bottom: .5rem;
+  line-height: 1.4;
+}
+
+.auth-switch {
+  margin-top: 1.25rem;
+  text-align: center;
+  font-size: .875rem;
+  color: var(--muted);
+}
+
+.auth-switch-btn {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: .875rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.auth-switch-btn:hover { text-decoration: underline; }
+
+.btn-primary:disabled { opacity: .6; cursor: not-allowed; }
+
+/* ── Header sign-out ── */
+.header-top-right {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  flex-shrink: 0;
+}
+
+.header-signout {
+  font-size: .7rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.7);
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 99px;
+  padding: .2rem .625rem;
+  cursor: pointer;
+  transition: background .12s, color .12s;
+  white-space: nowrap;
+}
+
+.header-signout:hover {
+  background: rgba(255,255,255,.2);
+  color: #fff;
+}
+
 /* ── Header hero KPI ── */
 .header-hero {
   text-align: center;
